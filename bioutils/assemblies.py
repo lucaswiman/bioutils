@@ -36,14 +36,14 @@ _assy_path_fmt = _assy_dir + '/' + '{name}.json'
 
 def get_assembly_names():
     """return list of available assemblies
-    
+
     >>> assy_names = get_assembly_names()
 
     >>> 'GRCh37.p13' in assy_names
     True
 
     """
-    
+
     return [n.replace(".json", "")
             for n in pkg_resources.resource_listdir(__name__, _assy_dir)
             if n.endswith(".json")
@@ -78,7 +78,7 @@ def get_assembly(name):
      u'length': 249250621,
      u'name': u'1',
      u'refseq_ac': u'NC_000001.10'}
-    
+
     """
 
     rsrc_strm = pkg_resources.resource_stream(__name__, _assy_path_fmt.format(name=name))
@@ -91,7 +91,7 @@ def get_assemblies(names=[]):
     function for the structure of assembly data.
 
     >>> assemblies = get_assemblies(names=['GRCh37.p13'])
-    >>> assemblies.keys()
+    >>> list(assemblies.keys())
     [u'GRCh37.p13']
     >>> assy = assemblies['GRCh37.p13']
 
@@ -162,7 +162,7 @@ def strip_chr(chr):
     u'22'
 
     """
-    return chr[3:] if chr[0:3] == 'chr' else chr        
+    return chr[3:] if chr[0:3] == 'chr' else chr
 
 
 

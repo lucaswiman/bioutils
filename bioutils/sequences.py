@@ -3,8 +3,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 """simple functions and lookup tables for nucleic acid and amino acid sequences"""
 
-import string
-
+import six
+from string import ascii_lowercase
 
 aa3_to_aa1_lut = {
     'Ala': 'A',    'Arg': 'R',    'Asn': 'N',    'Asp': 'D',
@@ -14,11 +14,16 @@ aa3_to_aa1_lut = {
     'Thr': 'T',    'Trp': 'W',    'Tyr': 'Y',    'Val': 'V',
     'Xaa': 'X',    'Ter': '*',    'Sec': 'U',
 }
-aa1_to_aa3_lut = {v: k for k, v in aa3_to_aa1_lut.iteritems()}
+aa1_to_aa3_lut = {v: k for k, v in aa3_to_aa1_lut.items()}
 
-complement_transtable_str = string.maketrans('ACGT', 'TGCA')
-complement_transtable_uni = dict(zip(map(ord, u'ACGT'), u'TGCA'))
+if six.PY2:                     # pragma: no cover
+    complement_transtable = {ord(f): ord(t) for f, t in zip("ACGT", "TGCA")}
+elif six.PY3:                   # pragma: no cover
+    complement_transtable = bytes.maketrans(b"ACGT", b"TGCA")
 
+
+def to_unicode(s):
+    return s if isinstance(s, six.text_type) else s.decode("ASCII")
 
 
 def complement(s):
@@ -33,22 +38,23 @@ def complement(s):
     """
     if s is None:
         return None
-    if isinstance(s, unicode):
-        return s.translate(complement_transtable_uni)
-    return s.translate(complement_transtable_str)
+    s = to_unicode(s)
+    return s.translate(complement_transtable)
 
 
 def reverse_complement(s):
     """return the reverse complement of a sequence
 
-    >>> reverse_complement(b'ATCG')
+    >>> reverse_complement('ATCG')
     'CGAT'
 
-    >>> reverse_complement(u'ATCG')
-    u'CGAT'
+    >>> reverse_complement(None)
 
     """
-    return None if s is None else b''.join(reversed(complement(s)))
+    if s is None:
+        return None
+    s = to_unicode(s)
+    return "".join(reversed(complement(s)))
 
 
 def replace_t_to_u(s):
@@ -111,7 +117,7 @@ def __looks_like_aa3_p(s):
     return (
         s is not None
         and (len(s) % 3 == 0)
-        and (len(s) == 0 or s[1] in string.lowercase)
+        and (len(s) == 0 or s[1] in ascii_lowercase)
     )
 
 
@@ -119,13 +125,13 @@ def __looks_like_aa3_p(s):
 
 ## <LICENSE>
 ## Copyright 2014 Bioutils Contributors (https://bitbucket.org/biocommons/bioutils)
-## 
+##
 ## Licensed under the Apache License, Version 2.0 (the "License");
 ## you may not use this file except in compliance with the License.
 ## You may obtain a copy of the License at
-## 
+##
 ##     http://www.apache.org/licenses/LICENSE-2.0
-## 
+##
 ## Unless required by applicable law or agreed to in writing, software
 ## distributed under the License is distributed on an "AS IS" BASIS,
 ## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
