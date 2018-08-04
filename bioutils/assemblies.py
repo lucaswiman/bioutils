@@ -82,7 +82,10 @@ def get_assembly(name):
     """
 
     rsrc_strm = pkg_resources.resource_stream(__name__, _assy_path_fmt.format(name=name))
-    return json.load(rsrc_strm)
+    rsrc = rsrc_strm.read()
+    if isinstance(rsrc, bytes):
+        rsrc = rsrc.decode('utf-8')
+    return json.loads(rsrc)
 
 
 def get_assemblies(names=[]):
