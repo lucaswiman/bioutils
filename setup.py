@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 setup(
     license = 'Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)',
     long_description = open('README.rst').read(),
-    use_scm_version = True,
     zip_safe = True,
 
+    version='0.1.5.vcounsyl',
     author = 'Reece Hart',
     author_email = 'reecehart@gmail.com',
     description = """miscellaneous simple bioinformatics utilities and lookup tables""",
